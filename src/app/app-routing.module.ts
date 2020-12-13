@@ -9,10 +9,7 @@ const belongsToAccount = (next) => hasCustomClaim(`account-${next.params.id}`);
 
 const routes: Routes = [
   {
-    path: '',
-    loadChildren: () => import('./components/tabs/tabs.module').then(m => m.TabsPageModule),
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin}
+    path: '', redirectTo:"tabs"
     
   },
   {
