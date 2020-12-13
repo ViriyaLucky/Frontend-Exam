@@ -18,7 +18,6 @@ export class Tab3Page implements OnInit{
   constructor(private auth:AuthService, private router: Router, private firestoreService:FirestoreService,    public alertCtrl:AlertController    ) {}
   logout(){
     this.auth.logoutUser().then(()=>{
-      this.router.navigate(['/']);
 
     })
   }

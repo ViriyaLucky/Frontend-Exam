@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -12,7 +13,8 @@ export class AuthService {
   public readonly credentials$: Observable<any> = this._credentials.asObservable();
 
   constructor(
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private router: Router
   ) { 
     this.afAuth.authState.subscribe((user) => {
 
@@ -40,15 +42,14 @@ export class AuthService {
 
   logoutUser() {
     return new Promise((resolve, reject) => {
-      if (this.afAuth.currentUser) {
-        this.afAuth.signOut()
-          .then(() => {
-            console.log("LOG Out");
-            resolve();
-          }).catch((error) => {
-            reject();
-          });
-      }
+      this.afAuth.signOut()
+        .then(() => {
+          console.log("LOG Out");
+          this.router.navigate(['/']);
+          resolve();
+        }).catch((error) => {
+          reject();
+        });
     })
   }
 

@@ -1,13 +1,12 @@
-#map_canvas {
-    width: 100%;
+.agm-info-window-content > h2{
+  color:black !important;
+}
+  agm-map {
     height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
   }
-
+.info-window{
+  color:black;
+}
 .check-in{
     align-items: flex-start;
     vertical-align: bottom;

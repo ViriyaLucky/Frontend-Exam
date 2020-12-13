@@ -17,6 +17,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { SearchFriendComponent } from './components/search-friend/search-friend.component';
 import { HTTP } from '@ionic-native/http/ngx';
 import { LongPressModule } from 'ionic-long-press';
+import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
   declarations: [AppComponent, SearchFriendComponent],

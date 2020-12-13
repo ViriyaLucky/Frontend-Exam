@@ -7,7 +7,23 @@
 </ion-header>
 
 <ion-content padding>
-    <div style="height: 100%; width: 100%" id="map_canvas"></div>
+  <agm-map
+  (mapReady)="mapReady($event)"
+   [latitude]="lat"
+   [longitude]="lng">
+      <agm-marker [latitude]="lat" [longitude]="lng">
+        <agm-info-window>
+          <h4 class="info-window">User @ {{lastPositionName}}</h4>
+          <p  class="info-window">{{address}}</p>
+        </agm-info-window>
+      </agm-marker>
+      <agm-marker *ngFor="let marker of listLocation" [latitude]="marker.position.lat" [longitude]="marker.position.lng" [iconUrl]="marker.icon">
+        <agm-info-window>
+            <h4  class="info-window">{{marker.name}}</h4>
+            <p  class="info-window">{{marker.address}}</p>
+        </agm-info-window>
+    </agm-marker>
+  </agm-map>
 
     <ion-fab bottom id="menuButtons">
       <ion-row text-center>      
@@ -15,7 +31,7 @@
           <ion-button color="primary" (click)="checkInLocation()">Check In Location</ion-button>
         </ion-col>
         <ion-col>
-          <ion-fab-button (click)="goToMyLocation()" >
+          <ion-fab-button (click)="locationClicked()" >
             <ion-icon name="locate-outline"></ion-icon>
           </ion-fab-button>
         </ion-col>

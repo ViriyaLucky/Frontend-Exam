@@ -3,79 +3,71 @@ import {
   ToastController,
   Platform, AlertController 
 } from '@ionic/angular';
-import {
-  GoogleMaps,
-  GoogleMap,
-  GoogleMapsEvent,
-  Marker,
-  GoogleMapsAnimation,
-  Geocoder,
-  MyLocation, MarkerCluster, Spherical, LatLng, GeocoderResult
-} from '@ionic-native/google-maps';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { AuthService } from 'src/app/services/auth.service';
 import * as firebase from 'firebase';
-import { HTTP } from '@ionic-native/http/ngx';
+import { google } from "google-maps";
+import {googlemaps} from 'googlemaps'; 
+import { HttpClient, HttpParams } from '@angular/common/http';
 
-
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
 export class Tab2Page implements OnInit {
-  location: MyLocation;
-  map: GoogleMap;
-  address:string;
+  lastPositionName;
+  lat: number = 51.678418;
+  lng: number = 7.809007;
+  protected map: any;
+
   mapMarkerA: any = { lat: -6.170213, lng: 106.663115 };
   mapMarkerB: any = {lat: 40.04215, lng: 14.102552 };
-  lat;
-  lng;
-  distance: number;
-  listFriend = [];
-  listLocation = [
-    // {
-    //   "position": {
-    //     "lat": -6.232454,
-    //     "lng": 106.634731
-    //   },
-    //   "name": "Teman 1",
-    //   "address": "Aiea Shopping Center_99-115\nAiea Heights Drive #125_Aiea, Hawaii 96701",
-    //   "icon": "assets/markercluster/marker.png"
-    // },
 
-  ];
+  distance: number;
+  height = 0;
+  coordinates;
+  listLocation = [];
   uid = firebase.default.auth().currentUser.uid;
-  profile;
+  address;
   
-  getAddress(lat: number, lng: number): Promise<any> {
+  getAddressService(lat: number, lng: number, i?, markerMap?): Promise<any> {
+    const  params = new  HttpParams().set('access_key', "850fadfe5a7d52ff86fc06bbc2053bf2").set('query', lat.toString() + ", " +  lng.toString()).set("output", "json");
+
     return new Promise((resolve,reject)=>{ 
-      this.http.get('http://api.positionstack.com/v1/reverse', {access_key:"850fadfe5a7d52ff86fc06bbc2053bf2",query:`${lat}, ${lng}`, output:"json" }, {})
-        .then(data => {
-          resolve(data.data); 
-        })
-        .catch(error => {
-          reject(error); 
-        });
-    }); 
+      this.http.get('http://api.positionstack.com/v1/reverse', {params}).subscribe((result:any)=>{
+        let data : any = result.data;
+        let res : any= data.filter(dat=> dat.type == "street")
+        let address = res[0].name
+        if(i == undefined){
+          this.address = address;
+        }else{
+          markerMap.address = address;
+          this.listLocation[i] = markerMap;
+        }
+      })
+    });
   }
  
   constructor(
-    private http: HTTP,
+    private http: HttpClient,
     public toastCtrl: ToastController,
     public firestoreService:FirestoreService,
     private platform: Platform,
     public authService:AuthService,
     public alertCtrl: AlertController 
     ) { 
-      this.getAddress(this.mapMarkerA.lat,this.mapMarkerA.lng);
-      let automaticCheckIn = () => {
-        let lat : number= this.lat | 0;
-        let lng : number= this.lng | 0;
-        this.firestoreService.updateLastPosition(lat, lng, "Automatic Location", this.uid)   
-      //  clearInterval(interval); // thanks @Luca D'Amico
-      }
-      const interval = setInterval(automaticCheckIn, 600000);
+      console.log(platform.height());
+      this.height = platform.height() - 120;
+      // this.getAddress(this.mapMarkerA.lat,this.mapMarkerA.lng);
+      // let automaticCheckIn = () => {
+      //   let lat : number= this.lat | 0;
+      //   let lng : number= this.lng | 0;
+      //   this.firestoreService.updateLastPosition(lat, lng, "Automatic Location", this.uid)   
+      // //  clearInterval(interval); // thanks @Luca D'Amico
+      // }
+      // const interval = setInterval(automaticCheckIn, 600000);
     }
 
   ngOnInit() {
@@ -83,18 +75,26 @@ export class Tab2Page implements OnInit {
     // you have to wait the event.
     this.platform.ready();
     this.loadMap();
+    this.firestoreService.getUserInfo(this.uid).then((data) =>{
+      this.lastPositionName = data.data()['lastPositionName']
+      try {
+        if(typeof(data.data()['lastPosition'].position) != undefined){
+          this.lat = data.data()['lastPosition'].position.lat
+          this.lng = data.data()['lastPosition'].position.lng
+        }
+      } catch (error) {
+        
+      }
+    
+    });
 
     this.firestoreService.getFriendList(this.uid).subscribe((data)=>{
       if(data.length == 0){
-        if(this.map != undefined){
-          this.map.clear()
-        }
         this.goToMyLocation();
       }
       this.listLocation = [];
       data.forEach((element, i) => {
         this.firestoreService.getUserInfo(element.friend_id).then((data)=>{
-          // console.log(data.data());
           let doc : any= data.data();
           var markerMap ={
             "position": {
@@ -106,22 +106,8 @@ export class Tab2Page implements OnInit {
             "icon": "assets/markercluster/marker.png",
             "id" : i
           }
-          this.getAddress(doc.lastPosition.position.lat, doc.lastPosition.position.lng)
-            .then((result) => {
-              let data = JSON.parse(result);
-              data= data.data;
-              let res : any= data.filter(dat=> dat.type == "street")
-              let address = res[0].name
-              markerMap.address = address;
-              this.listLocation[i] = markerMap;
-              this.addCluster(this.listLocation);
-              this.goToMyLocation();
-            }).catch((err) => {
-            
-          });
+          this.getAddressService(doc.lastPosition.position.lat, doc.lastPosition.position.lng, i, markerMap);
           this.listLocation.push(markerMap);
-          console.log(this.listLocation);
-          this.addCluster(this.listLocation);
           this.goToMyLocation();
         })
 
@@ -132,105 +118,52 @@ export class Tab2Page implements OnInit {
   }
  
   loadMap() {
-    this.map = GoogleMaps.create('map_canvas', {
-      'camera': {
-        'target': {
-          "lat": 21.382314,
-          "lng": -157.933097
-        },
-        'zoom': 10
-      }
-    });
     this.goToMyLocation()
     // this.calcDistance();
   }
-
-  private calcDistance(): void {
-    this.distance = Math.trunc(Spherical.computeDistanceBetween(this.mapMarkerA, this.mapMarkerB));
-    // console.log(`Distance approx. ${this.distance} meters`);
-    this.showToast(`Distance approx. ${this.distance} meters`);    
+   getPosition(): Observable<Position> {
+    return Observable.create(
+      (observer) => {
+      navigator.geolocation.watchPosition((pos: Position) => {
+        observer.next(pos);
+      }),
+      () => {
+          console.log('Position is not available');
+      },
+      {
+        enableHighAccuracy: true
+      };
+    });
   }
-  goToMyLocation(){
-    // Get the location of you
-    if(this.map != undefined){
-      this.map.getMyLocation().then((location: MyLocation) => {
-        console.log(JSON.stringify(location, null ,2));
+  // private calcDistance(): void {
+  //   this.distance = Math.trunc(Spherical.computeDistanceBetween(this.mapMarkerA, this.mapMarkerB));
+  //   // console.log(`Distance approx. ${this.distance} meters`);
+  //   this.showToast(`Distance approx. ${this.distance} meters`);    
+  // }
 
-        this.lat = location.latLng.lat;
-        this.lng = location.latLng.lng;
+  protected mapReady(map) {
+    this.map = map;
+  }
 
-        // Move the map camera to the location with animation
-        this.map.animateCamera({
-          target: location.latLng,
-          zoom: 17,
-          duration: 5000
+  public locationClicked = () => {
+    if (this.map)
+      this.map.panTo({ lat: this.lat, lng:this.lng });
+  }
+
+  goToMyLocation() {
+    this.getPosition().subscribe(
+        (pos: Position) => {
+            this.coordinates = {
+              latitude:  + (pos.coords.latitude),
+              longitude: + (pos.coords.longitude)
+            };
+            this.lat = pos.coords.latitude;
+            this.lng = pos.coords.longitude
+            this.getAddressService(pos.coords.latitude,pos.coords.longitude )
         });
-
-        //add a marker
-        let marker: Marker = this.map.addMarkerSync({
-          title: 'Your Location',
-          snippet: 'Here is your location!',
-          position: location.latLng,
-          animation: GoogleMapsAnimation.BOUNCE
-        });
-
-        //show the infoWindow
-        marker.showInfoWindow();
-
-
-        //If clicked it, display the alert
-        marker.on(GoogleMapsEvent.MARKER_CLICK).subscribe(() => {
-          // this.showToast('clicked!');
-        });
-
-        this.map.on(GoogleMapsEvent.MAP_READY).subscribe(
-          (data) => {
-              // console.log("Click MAP",data);
-          }
-        );
-      })
-      .catch(err => {
-        //this.loading.dismiss();
-        this.showToast(err.error_message);
-      });
-    }
   }
   
-  addCluster(data) {
-    if(this.map != undefined){
-      this.map.clear()
-
-    }
-    if(data != undefined && this.map != undefined){
-      let markerCluster: MarkerCluster = this.map.addMarkerClusterSync({
-        markers: data,
-        icons: [
-          {
-            min: 1,
-            max: 9,
-            url: "./assets/markercluster/small.png",
-            label: {
-              color: "white"
-            }
-          },
-          {
-            min: 10,
-            url: "./assets/markercluster/large.png",
-            label: {
-              color: "white"
-            }
-          }
-        ]
-      })
-      markerCluster.on(GoogleMapsEvent.MARKER_CLICK).subscribe((params) => {
-        let marker: Marker = params[1];
-        marker.setTitle(marker.get("name"));
-        marker.setSnippet(marker.get("address"));
-        marker.showInfoWindow();
-      })
-
-    }
-  }
+ 
 
   async showToast(message: string) {
     let toast = await this.toastCtrl.create({
@@ -261,6 +194,7 @@ export class Tab2Page implements OnInit {
         {
           text: 'Check-in',
           handler: data => {
+            this.lastPositionName = data.locationName
             this.firestoreService.updateLastPosition(this.lat, this.lng, data.locationName, this.uid)
             this.showToast("Check in recorded!");
           }
@@ -270,91 +204,4 @@ export class Tab2Page implements OnInit {
     (await alert).present();
 
   }
-
-  
-  // dummyData() {
-  //   var zz ={
-  //     "position": {
-  //       "lat": -6.232470,
-  //       "lng": 106.634731
-  //     },
-  //     "name": "Teman 1",
-  //     "address": "Aiea Shopping Center_99-115\nAiea Heights Drive #125_Aiea, Hawaii 96701",
-  //     "icon": "assets/markercluster/marker.png"
-  //   }
-  //    var ddd= 
-  //    [
-  //     {
-  //       "position": {
-  //         "lat": -6.232454,
-  //         "lng": 106.634731
-  //       },
-  //       "name": "Teman 1",
-  //       "address": "Aiea Shopping Center_99-115\nAiea Heights Drive #125_Aiea, Hawaii 96701",
-  //       "icon": "assets/markercluster/marker.png"
-  //     },
- 
-  //   ];
-  //   let aaa = this.listFriend;
-
-  //   ddd.push(zz)
-  //   // var ddd= 
-  //   //  [
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.232454,
-  //   //       "lng": 106.634731
-  //   //     },
-  //   //     "name": "Teman 1",
-  //   //     "address": "Aiea Shopping Center_99-115\nAiea Heights Drive #125_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.232299,
-  //   //       "lng": 106.635718
-  //   //     },
-  //   //     "name": "Teman 2",
-  //   //     "address": "Pearlridge Center_98-125\nKaonohi Street_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.231867,
-  //   //       "lng": 106.634511
-  //   //     },
-  //   //     "name": "Teman 3",
-  //   //     "address": "Pearlridge Center_98-125\nKaonohi Street_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.231847,
-  //   //       "lng": 106.635831
-  //   //     },
-  //   //     "name": "Teman 4",
-  //   //     "address": "Pearlridge Center_98-125\nKaonohi Street_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.232684,
-  //   //       "lng": 106.635777
-  //   //     },
-  //   //     "name": "Teman 5",
-  //   //     "address": "Pearlridge Center_98-125\nKaonohi Street_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   //   {
-  //   //     "position": {
-  //   //       "lat": -6.233090,
-  //   //       "lng": 106.635606
-  //   //     },
-  //   //     "name": "Teman 6",
-  //   //     "address": "Pearlridge Center_98-125\nKaonohi Street_Aiea, Hawaii 96701",
-  //   //     "icon": "assets/markercluster/marker.png"
-  //   //   },
-  //   // ];
-  //   return ddd;
-  // }
 }
