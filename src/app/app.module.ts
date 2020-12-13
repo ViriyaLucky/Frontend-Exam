@@ -37,3 +37,4 @@ import { LongPressModule } from 'ionic-long-press';
   bootstrap: [AppComponent]
 })
 export class AppModule {}
+
