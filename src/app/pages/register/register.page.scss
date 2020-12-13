@@ -1,0 +1,30 @@
+ion-item{
+    --background: #3880ff;
+    --color: #fff;
+}
+
+ion-button{
+    --background: #062f77;
+}
+
+
+.filtered-blue-bg{background-color: rgba(201, 76, 76, 1) !important;}
+
+.mid{
+    --margin:0 0 0 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.img-mid {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    
+}
+
+.error-message{
+    color:red;
+}

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="danger">
+    <ion-title>Add Friend</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list padding  *ngFor = "let user of listUser">
+    <ion-item (click)="addUser(user)">
+      <ion-thumbnail slot="start">
+        <img src="{{user.profileImageUrl}}">
+      </ion-thumbnail>
+       <ion-text>{{user.fullname}}</ion-text> 
+    </ion-item>
+  </ion-list>
+  <ion-grid>
+    <ion-row>
+      <ion-col text-center>
+       
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col text-center>
+        <ion-button (click)="closeModal()">Close</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

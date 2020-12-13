@@ -3,8 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
-};
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyC2mO5fDZpvLMfqD8kBvBFnkLG7qxhDFxM",
+    authDomain: "uas-crossplatform-lucky.firebaseapp.com",
+    projectId: "uas-crossplatform-lucky",
+    storageBucket: "uas-crossplatform-lucky.appspot.com",
+    messagingSenderId: "515959540665"
+  }
+ };
 
 /*
  * For easier debugging in development mode, you can import the following file

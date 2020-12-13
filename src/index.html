@@ -12,15 +12,37 @@
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
-  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  <link rel="icon" type="image/png" href="./src/assets/icon/favicon.png" />
+  <script src="https://maps.google.com/maps/api/js?key=AIzaSyCASREX3DvG_6gUdqZsZW0q0f82ZHQawMs"></script>
 
   <!-- add to homescreen for ios -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
-<body>
+<body class="mat-typography">
   <app-root></app-root>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.1.2/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyC2mO5fDZpvLMfqD8kBvBFnkLG7qxhDFxM",
+    authDomain: "uas-crossplatform-lucky.firebaseapp.com",
+    projectId: "uas-crossplatform-lucky",
+    storageBucket: "uas-crossplatform-lucky.appspot.com",
+    messagingSenderId: "515959540665",
+    appId: "1:515959540665:web:dc6edf5306c9a6f5518468"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
 </body>
 
 </html>

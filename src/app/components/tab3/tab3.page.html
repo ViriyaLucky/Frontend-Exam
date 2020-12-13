@@ -1,0 +1,38 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Profile
+    </ion-title>
+    <ion-buttons slot="primary">
+      <ion-button color="secondary" (click)="logout()">
+        Logout
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-header>
+      <ion-img   (click)="changeImageProfile()" src="../../../assets/user-placeholder.png"></ion-img>
+      <ion-card-title>Nama: Viriya Lucky - 00000019700 </ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      Kesan: baik, ok
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Feeds</ion-card-title>
+    </ion-card-header>
+      <ion-list>
+        <ion-item *ngFor = "let feed of feeds"  (click)="deleteFeed(feed)">
+          <ion-label text-wrap>{{feed.date.toDate() | date: 'dd MMM hh:mm'}} {{ " @ " + feed.lastPositionName + " ("+ feed.lastPosition.position.lat + ", " + feed.lastPosition.position.lng + ")"}}</ion-label>
+        </ion-item>
+      </ion-list>
+
+  </ion-card>
+
+</ion-content>

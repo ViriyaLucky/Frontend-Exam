@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Maps
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+    <div style="height: 100%; width: 100%" id="map_canvas"></div>
+
+    <ion-fab bottom id="menuButtons">
+      <ion-row text-center>      
+        <ion-col> 
+          <ion-button color="primary" (click)="checkInLocation()">Check In Location</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-fab-button (click)="goToMyLocation()" >
+            <ion-icon name="locate-outline"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-fab>
+</ion-content>
