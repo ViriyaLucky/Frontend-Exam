@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
+ 
   {
     path: 'tabs',
     component: TabsPage,
@@ -28,9 +29,9 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/tabs/home',
+    redirectTo: 'tabs/home',
     pathMatch: 'full'
-  }
+  },
 ];
 
 @NgModule({

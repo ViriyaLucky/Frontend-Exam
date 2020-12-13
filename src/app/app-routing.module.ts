@@ -9,7 +9,7 @@ const belongsToAccount = (next) => hasCustomClaim(`account-${next.params.id}`);
 
 const routes: Routes = [
   {
-    path: '', redirectTo:"tabs"
+    path: '', redirectTo:"tabs",pathMatch:"full"
     
   },
   {
