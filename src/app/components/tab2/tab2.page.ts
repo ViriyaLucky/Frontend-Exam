@@ -140,6 +140,7 @@ export class Tab2Page implements OnInit {
   //   // console.log(`Distance approx. ${this.distance} meters`);
   //   this.showToast(`Distance approx. ${this.distance} meters`);    
   // }
+  
 
   protected mapReady(map) {
     this.map = map;
