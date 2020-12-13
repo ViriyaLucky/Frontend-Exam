@@ -46,6 +46,7 @@ export class AuthService {
         .then(() => {
           console.log("LOG Out");
           this.router.navigate(['/login']);
+          resolve()
         }).catch((error) => {
           reject();
         });
