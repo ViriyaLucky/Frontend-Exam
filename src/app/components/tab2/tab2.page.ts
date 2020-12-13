@@ -36,7 +36,7 @@ export class Tab2Page implements OnInit {
     const  params = new  HttpParams().set('access_key', "850fadfe5a7d52ff86fc06bbc2053bf2").set('query', lat.toString() + ", " +  lng.toString()).set("output", "json");
 
     return new Promise((resolve,reject)=>{ 
-      this.http.get('http://api.positionstack.com/v1/reverse', {params}).subscribe((result:any)=>{
+      this.http.get('https://api.positionstack.com/v1/reverse', {params}).subscribe((result:any)=>{
         let data : any = result.data;
         let res : any= data.filter(dat=> dat.type == "street")
         let address = res[0].name
@@ -140,7 +140,7 @@ export class Tab2Page implements OnInit {
   //   // console.log(`Distance approx. ${this.distance} meters`);
   //   this.showToast(`Distance approx. ${this.distance} meters`);    
   // }
-  
+
 
   protected mapReady(map) {
     this.map = map;
