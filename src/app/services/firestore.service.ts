@@ -166,6 +166,27 @@ export class FirestoreService {
     const ref = this.storage.ref(filePath);
     const task = ref.put(file);
   }
+
+  updateProfileImageUrl(
+    extension,
+    UID: string
+  ) {
+    var profileImageUrl = UID + "." + extension;
+    var docRef = this.firestore.doc(`users/${UID}`);
+    return docRef.ref
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          //change image if extension exist
+          if (extension) {
+            docRef.update({
+              profileImageUrl,
+            });
+          } 
+        }
+      })
+      .catch(function (error) {});
+  }
   getProfileImageUrl(uid) {
     try {
       return this.storage

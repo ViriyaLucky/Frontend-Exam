@@ -1,5 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { IonicModule, NavController, NavParams, Platform } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 import { SearchFriendComponent } from './search-friend.component';
 
@@ -10,7 +13,12 @@ describe('SearchFriendComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ SearchFriendComponent ],
-      imports: [IonicModule.forRoot()]
+      providers: [
+        NavController, Platform, NavParams
+      ],
+      imports: [IonicModule.forRoot(),
+        AngularFireModule.initializeApp(environment.firebase),
+        AngularFirestoreModule,]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SearchFriendComponent);

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController, ModalController, NavParams } from '@ionic/angular';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { ToastController } from '@ionic/angular';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-search-friend',
@@ -11,7 +12,7 @@ import { ToastController } from '@ionic/angular';
 export class SearchFriendComponent implements OnInit {
   modalTitle: string;
   modelId: number;
-  uid;
+  uid = firebase.default.auth().currentUser.uid;
   listUser = [];
   
   constructor(public firestoreService:FirestoreService,
@@ -27,17 +28,19 @@ export class SearchFriendComponent implements OnInit {
   }
   getUserList(){
     this.firestoreService.getUserList(this.uid).then( (listUser:any[]) => {
-      this.listUser = listUser;
-      this.listUser.forEach((element, i) =>{
-        let profileImage = element.profileImageUrl;
-        element.profileImageUrl = "../../../assets/user-placeholder.png"
-        this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
-          element.profileImageUrl = res;
-          console.log(res);
-        }).catch((error)=>{
-            console.log(error);
-        });
-     });
+      if(listUser.length != 0){
+        this.listUser = listUser;
+        this.listUser.forEach((element, i) =>{
+          let profileImage = element.profileImageUrl;
+          element.profileImageUrl = "../../../assets/user-placeholder.png"
+          this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
+            element.profileImageUrl = res;
+            console.log(res);
+          }).catch((error)=>{
+              console.log(error);
+          });
+      });
+      }
      
       // console.log(this.listFriend);
     })

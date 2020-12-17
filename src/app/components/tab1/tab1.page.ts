@@ -19,16 +19,24 @@ export class Tab1Page implements OnInit {
   listFriendBackup;
   uid = firebase.default.auth().currentUser.uid;
   profile;
-  profileImageUrl;
+  profileImageUrl = "../../../assets/user-placeholder.png";
   user;
   docLength;
+  userData;
   counter = 0;
   constructor(private firestoreService:FirestoreService, 
     public authService:AuthService ,
     public modalController: ModalController,
     public alertCtrl:AlertController
-    ) {}
+    ) {
+     
+    }
   ngOnInit(){
+    firebase.default.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        return  user.uid.toString();
+      }
+    }).bind(this.uid);
     this.getFriends();
   }
 
@@ -39,8 +47,7 @@ export class Tab1Page implements OnInit {
         this.docLength = doc.length
         doc.forEach((docs:any) => {
             this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
-            console.log(this.docLength)
-            if(this.counter > doc.length){
+            if(this.counter+1 > this.docLength){
               return
             }
             let user = new User().deserialize(doc);
@@ -49,7 +56,7 @@ export class Tab1Page implements OnInit {
             let friend_id = docs.friend_id;
             let fr = new Friend().deserialize({ friend_id , user});
             temp.push(fr);
-            console.log("push ke-" , this.counter)
+            
             let curr = this.counter;
 
             this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{

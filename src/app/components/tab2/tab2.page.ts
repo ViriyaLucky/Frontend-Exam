@@ -58,7 +58,6 @@ export class Tab2Page implements OnInit {
     public authService:AuthService,
     public alertCtrl: AlertController 
     ) { 
-      console.log(platform.height());
       this.height = platform.height() - 120;
       // this.getAddress(this.mapMarkerA.lat,this.mapMarkerA.lng);
       let automaticCheckIn = () => {

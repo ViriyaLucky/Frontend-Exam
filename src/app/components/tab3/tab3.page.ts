@@ -15,9 +15,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class Tab3Page implements OnInit{
   feeds;
   profile;
-  profileImageUrl;
+  profileImageUrl = "../../../assets/user-placeholder.png";
+  fullname = "";
   uid = firebase.default.auth().currentUser.uid;
-  constructor(private auth:AuthService, private router: Router, private firestoreService:FirestoreService,    public alertCtrl:AlertController    ) {}
+  constructor(private auth:AuthService, private router: Router, private firestoreService:FirestoreService, public alertCtrl:AlertController) {
+    this.uid = firebase.default.auth().currentUser ? firebase.default.auth().currentUser.uid : "";
+
+  }
   logout(){
     this.auth.logoutUser()
   }
@@ -35,9 +39,21 @@ export class Tab3Page implements OnInit{
     }
   }
 
-  changeImageProfile(){
-    console.log("soon")
+  changeProfileImage(){
+    document.querySelector('input').click()
   }
+
+  handle($event){
+    const file = $event.target.files[0];
+    const extension = file.name.split('.')[1];
+    this.firestoreService.updateProfileImageUrl(extension, this.uid)
+    this.firestoreService.uploadProfileImage(file, extension, this.uid);
+   this.firestoreService.getProfileImageUrl(this.uid + "." + extension).then((res) =>{
+      this.profileImageUrl = res;
+   })
+    // this.profileImageUrl = noExtension + "." + extension
+  }
+
   async deleteFeed(feed){
     let alert = await this.alertCtrl.create({
       message: 'Do you want to remove this feed?',
@@ -65,6 +81,7 @@ export class Tab3Page implements OnInit{
       if(doc.exists){
         console.log(doc.data());
         this.profile = doc.data();
+        this.fullname = this.profile.fname + " " + this.profile.lname
         this.firestoreService.getProfileImageUrl(this.profile.profileImageUrl).then((res)=>{
           this.profileImageUrl = res;
         }).catch((error)=>{

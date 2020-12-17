@@ -14,13 +14,16 @@
 <ion-content [fullscreen]="true">
   <ion-card>
     <ion-card-header>
-      <ion-img   (click)="changeImageProfile()" src="../../../assets/user-placeholder.png"></ion-img>
-      <ion-card-title>Nama: Viriya Lucky - 00000019700 | Now login as {{profile.fname + " " + profile.lname}} </ion-card-title>
+      <img (click)="changeImageProfile()" src="{{profileImageUrl}}">
+      <ion-card-title>Nama: Viriya Lucky - 00000019700 | Now login as {{fullname}} </ion-card-title>
     </ion-card-header>
   
     <ion-card-content>
-      Kesan: baik, ok
+      Kesan: baik, ok, aslab selalu menyampaikan hal yang informatif
     </ion-card-content>
+    <ion-button expand="block" fill="outline" (click)="changeProfileImage()">Edit Profile Image
+      <input type="file" style="display:none" (change)="handle($event)">
+    </ion-button>
   </ion-card>
 
   <ion-card style="margin-bottom:70px">

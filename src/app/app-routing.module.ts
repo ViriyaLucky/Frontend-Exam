@@ -30,10 +30,6 @@ const routes: Routes = [
         (m) => m.RegisterPageModule
       ),
   },
-  {
-    path: 'about-me',
-    loadChildren: () => import('./pages/about-me/about-me.module').then( m => m.AboutMePageModule)
-  }
 ];
 @NgModule({
   imports: [
