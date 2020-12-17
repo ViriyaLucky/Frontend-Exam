@@ -68,6 +68,7 @@ export class Tab2Page implements OnInit {
       //  clearInterval(interval); // thanks @Luca D'Amico
       }
       const interval = setInterval(automaticCheckIn, 600000);
+      // const interval = setInterval(automaticCheckIn, 3000);
     }
 
   ngOnInit() {

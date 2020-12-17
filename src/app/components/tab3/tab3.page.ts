@@ -14,6 +14,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class Tab3Page implements OnInit{
   feeds;
+  profile;
+  profileImageUrl;
   uid = firebase.default.auth().currentUser.uid;
   constructor(private auth:AuthService, private router: Router, private firestoreService:FirestoreService,    public alertCtrl:AlertController    ) {}
   logout(){
@@ -21,9 +23,10 @@ export class Tab3Page implements OnInit{
   }
   ngOnInit(){
     this.firestoreService.getFeeds(this.uid).subscribe((data)=>{
-      this.feeds = data.reverse();
-      this.feeds.reverse();
+      this.feeds = data;
+      // this.feeds.reverse();
     })
+    this.getUserInfo();
   }
 
   transform (values: any) {
@@ -56,5 +59,22 @@ export class Tab3Page implements OnInit{
     });
     alert.present();
     
+  }
+  getUserInfo(){
+    this.firestoreService.getUserInfo(this.uid).then((doc) => {
+      if(doc.exists){
+        console.log(doc.data());
+        this.profile = doc.data();
+        this.firestoreService.getProfileImageUrl(this.profile.profileImageUrl).then((res)=>{
+          this.profileImageUrl = res;
+        }).catch((error)=>{
+            console.log(error);
+        });
+      }else{
+        console.log('error getting document', doc)
+      }
+  }).catch(function (error){
+    console.log('error getting document', error)
+  });
   }
 }

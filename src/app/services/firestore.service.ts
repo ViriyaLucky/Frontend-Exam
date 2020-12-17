@@ -96,7 +96,7 @@ export class FirestoreService {
   }
 
   getFeeds(UID):Observable<any>{
-    var docRef = this.firestore.collection("users").doc(`${UID}`).collection("feeds");
+    var docRef = this.firestore.collection("users").doc(`${UID}`).collection("feeds", ref => ref.orderBy('date', 'desc'));
     return docRef.valueChanges({idField: 'id'})
   }
   
