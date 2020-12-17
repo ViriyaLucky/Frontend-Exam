@@ -21,6 +21,8 @@ export class Tab1Page implements OnInit {
   profile;
   profileImageUrl;
   user;
+  docLength;
+  counter = 0;
   constructor(private firestoreService:FirestoreService, 
     public authService:AuthService ,
     public modalController: ModalController,
@@ -34,37 +36,33 @@ export class Tab1Page implements OnInit {
     this.firestoreService.getFriendList(this.uid)
       .subscribe((doc) => {
         let temp = []
+        this.docLength = doc.length
         doc.forEach((docs:any) => {
-          this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
-            let id = doc.profileImageUrl.replace(".png", "");
-            let exist = -1;
-            this.listFriend.find((o, i) => {
-              if (o.friend_id== id) {
-                  exist = i;
-                  return false; // stop searching
-              }else{
-                return false;
-              }
-            });
+            this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
+            console.log(this.docLength)
+            if(this.counter > doc.length){
+              return
+            }
             let user = new User().deserialize(doc);
             let profileImage = user.profileImageUrl;
             user.profileImageUrl = "../../../assets/user-placeholder.png";
             let friend_id = docs.friend_id;
             let fr = new Friend().deserialize({ friend_id , user});
-           
+            temp.push(fr);
+            console.log("push ke-" , this.counter)
+            let curr = this.counter;
+
             this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
               fr.imageUrl =  res;
-              if(exist != -1){
-                this.listFriend[Number(exist.toString())] = fr;
-              }else{
-                temp.push(fr);
-              }
+              this.listFriend[Number(curr.toString())] = fr; 
             }).catch((error)=>{
                 console.log(error);
             });
+            this.counter++
           })
         });
         this.listFriend = temp;
+        this.counter = 0;
         this.listFriendBackup = this.listFriend;
         this.firestoreService.friendList = this.listFriend;
       })
@@ -72,8 +70,7 @@ export class Tab1Page implements OnInit {
   }
 
   IonViewDidEnter (){
-    console.log("IonViewDidEnter tab 1")
-    this.getFriends();
+    
   }
   async addFriend(){
     const modal = await this.modalController.create({

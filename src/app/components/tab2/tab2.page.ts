@@ -24,7 +24,7 @@ export class Tab2Page implements OnInit {
 
   mapMarkerA: any = { lat: -6.170213, lng: 106.663115 };
   mapMarkerB: any = {lat: 40.04215, lng: 14.102552 };
-
+  setAddress
   distance: number;
   height = 0;
   coordinates;
@@ -33,13 +33,13 @@ export class Tab2Page implements OnInit {
   address;
   
   getAddressService(lat: number, lng: number, i?, markerMap?): Promise<any> {
-    const  params = new  HttpParams().set('access_key', "850fadfe5a7d52ff86fc06bbc2053bf2").set('query', lat.toString() + ", " +  lng.toString()).set("output", "json");
+    const  params = new  HttpParams().set('key', "pk.00975f229644c13b72fea1f97beba659").set('lat', lat.toString()).set('lon', lng.toString()).set("format", "json");
 
     return new Promise((resolve,reject)=>{ 
-      this.http.get('http://api.positionstack.com/v1/reverse', {params}).subscribe((result:any)=>{
-        let data : any = result.data;
-        let res : any= data.filter(dat=> dat.type == "street")
-        let address = res[0].name
+      this.http.get('  https://us1.locationiq.com/v1/reverse.php', {params}).subscribe((result:any)=>{    
+        // let data : any = result.data;
+        // let res : any= data.filter(dat=> dat.type == "street")
+        let address = result.display_name
         if(i == undefined){
           this.address = address;
         }else{
@@ -61,13 +61,13 @@ export class Tab2Page implements OnInit {
       console.log(platform.height());
       this.height = platform.height() - 120;
       // this.getAddress(this.mapMarkerA.lat,this.mapMarkerA.lng);
-      // let automaticCheckIn = () => {
-      //   let lat : number= this.lat | 0;
-      //   let lng : number= this.lng | 0;
-      //   this.firestoreService.updateLastPosition(lat, lng, "Automatic Location", this.uid)   
-      // //  clearInterval(interval); // thanks @Luca D'Amico
-      // }
-      // const interval = setInterval(automaticCheckIn, 600000);
+      let automaticCheckIn = () => {
+        let lat : number= this.lat;
+        let lng : number= this.lng;
+        this.firestoreService.updateLastPosition(lat, lng, "Automatic Location", this.uid)   
+      //  clearInterval(interval); // thanks @Luca D'Amico
+      }
+      const interval = setInterval(automaticCheckIn, 600000);
     }
 
   ngOnInit() {
@@ -106,7 +106,13 @@ export class Tab2Page implements OnInit {
             "icon": "assets/markercluster/marker.png",
             "id" : i
           }
-          this.getAddressService(doc.lastPosition.position.lat, doc.lastPosition.position.lng, i, markerMap);
+          console.log("sebelom")
+          this.setAddress = function() {
+              setTimeout(function(){
+                this.getAddressService(doc.lastPosition.position.lat, doc.lastPosition.position.lng, i, markerMap);
+              }.bind(this), 3000);
+          };
+          this.setAddress()
           this.listLocation.push(markerMap);
           this.goToMyLocation();
         })
@@ -158,9 +164,12 @@ export class Tab2Page implements OnInit {
               latitude:  + (pos.coords.latitude),
               longitude: + (pos.coords.longitude)
             };
-            this.lat = pos.coords.latitude;
-            this.lng = pos.coords.longitude
-            this.getAddressService(pos.coords.latitude,pos.coords.longitude )
+            if(this.lat != pos.coords.latitude ||  this.lng != pos.coords.longitude){
+              this.lat = pos.coords.latitude;
+              this.lng = pos.coords.longitude
+              this.getAddressService(pos.coords.latitude,pos.coords.longitude )
+            }
+           
         });
   }
   
