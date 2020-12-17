@@ -113,7 +113,7 @@ export class RegisterPage implements OnInit {
           res.user.uid).then(
             () => {
               loading.dismiss().then(() => {
-                this.router.navigateByUrl('/');
+                this.router.navigate(["/"]);
               });
             },
             error => {

@@ -50,7 +50,7 @@ export class LoginPage implements OnInit {
   loginUser(value){
     this.authService.loginUser(value)
       .then(res => {
-        this.router.navigateByUrl('/');
+        this.router.navigate(["/"]);
       }, err => {
         this.errorMessage = err.message;
       });
@@ -58,6 +58,6 @@ export class LoginPage implements OnInit {
 
   }
   goToRegisterPage(){
-    this.router.navigateByUrl('/register');
+    this.router.navigate(["/register"]);
   }
 }
