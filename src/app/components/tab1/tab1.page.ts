@@ -32,22 +32,18 @@ export class Tab1Page implements OnInit {
      
     }
   ngOnInit(){
-    firebase.default.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        return  user.uid.toString();
-      }
-    }).bind(this.uid);
     this.getFriends();
   }
 
   getFriends(){
     this.firestoreService.getFriendList(this.uid)
       .subscribe((doc) => {
+        this.listFriend = []
         let temp = []
         this.docLength = doc.length
-        doc.forEach((docs:any) => {
+        doc.forEach((docs:any,index) => {
             this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
-            if(this.counter+1 > this.docLength){
+            if(index+1 > this.docLength){
               return
             }
             let user = new User().deserialize(doc);
@@ -56,12 +52,16 @@ export class Tab1Page implements OnInit {
             let friend_id = docs.friend_id;
             let fr = new Friend().deserialize({ friend_id , user});
             temp.push(fr);
-            
-            let curr = this.counter;
 
+            let curr = this.counter;
+            // this.getImageUrl(fr);
             this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
-              fr.imageUrl =  res;
-              this.listFriend[Number(curr.toString())] = fr; 
+              fr.user.profileImageUrl =  res;   
+              temp.forEach((element, index) => {
+                if(element.friend_id == fr.friend_id){
+                  temp[index] = fr
+                }
+              });
             }).catch((error)=>{
                 // console.log(error);
             });
@@ -69,16 +69,29 @@ export class Tab1Page implements OnInit {
           })
         });
         this.listFriend = temp;
+        this.listFriend.forEach((data, index)=>{
+          this.firestoreService.getProfileImageUrl(data.user.profileImageUrl).then((res)=>{
+            this.listFriend[index].user.profileImageUrl = res
+            console.log(res)
+          }).catch((error)=>{
+              // console.log(error);
+          });
+        })
         this.counter = 0;
         this.listFriendBackup = this.listFriend;
         this.firestoreService.friendList = this.listFriend;
       })
      
   }
-
-  IonViewDidEnter (){
-    
+  getImageUrl(fr){
+    this.firestoreService.getProfileImageUrl(fr.user.profileImageUrl).then((res)=>{
+      console.log(res)
+      fr.user.profileImageUrl = res
+    }).catch((error)=>{
+        // console.log(error);
+    });
   }
+  
   async addFriend(){
     const modal = await this.modalController.create({
       component: SearchFriendComponent,

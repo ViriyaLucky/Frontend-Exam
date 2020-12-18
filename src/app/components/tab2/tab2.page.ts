@@ -100,7 +100,7 @@ export class Tab2Page implements OnInit {
               "lng": doc.lastPosition.position.lng
             },
             "name": doc.fname + " " + doc.lname + " @ " + doc.lastPositionName,
-            "address": "Aiea Shopping Center_99-115\nAiea Heights Drive #125_Aiea, Hawaii 96701",
+            "address": "-",
             "icon": "assets/markercluster/marker.png",
             "id" : i
           }

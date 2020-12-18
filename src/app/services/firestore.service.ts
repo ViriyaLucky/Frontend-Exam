@@ -210,6 +210,7 @@ export class FirestoreService {
       .catch(function (error) {});
   }
   getProfileImageUrl(uid) {
+    console.log("masuk sini")
     try {
       return this.storage
         .ref(`profileImage/${uid}`)
