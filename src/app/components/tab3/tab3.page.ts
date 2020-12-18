@@ -42,7 +42,8 @@ export class Tab3Page implements OnInit{
   }
 
   changeProfileImage(){
-    document.querySelectorAll('.imageUpload')[0].click()
+    let element: HTMLElement = document.getElementsByClassName('imageUpload')[0] as HTMLElement;
+    element.click()
   }
 
   async handle($event){
