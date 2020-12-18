@@ -1,0 +1,25 @@
+ds@gmail.com:ds123456
+towi@gmail.com:towi123456
+johnsnow@gmail.com:johnsnow
+
+https://uas-viriyalucky-19700.vercel.app/
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyC2mO5fDZpvLMfqD8kBvBFnkLG7qxhDFxM",
+    authDomain: "uas-crossplatform-lucky.firebaseapp.com",
+    projectId: "uas-crossplatform-lucky",
+    storageBucket: "uas-crossplatform-lucky.appspot.com",
+    messagingSenderId: "515959540665",
+    appId: "1:515959540665:web:dc6edf5306c9a6f5518468"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>

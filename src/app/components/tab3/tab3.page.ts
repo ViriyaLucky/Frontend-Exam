@@ -48,9 +48,8 @@ export class Tab3Page implements OnInit{
     const extension = file.name.split('.')[1];
     this.firestoreService.updateProfileImageUrl(extension, this.uid)
     this.firestoreService.uploadProfileImage(file, extension, this.uid);
-   this.firestoreService.getProfileImageUrl(this.uid + "." + extension).then((res) =>{
-      this.profileImageUrl = res;
-   })
+    this.getUserInfo();
+
     // this.profileImageUrl = noExtension + "." + extension
   }
 
