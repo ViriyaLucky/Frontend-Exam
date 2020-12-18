@@ -42,7 +42,7 @@ export class Tab3Page implements OnInit{
   }
 
   changeProfileImage(){
-    document.querySelector('input').click()
+    document.querySelectorAll('.imageUpload')[0].click()
   }
 
   async handle($event){
