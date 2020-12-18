@@ -2,12 +2,13 @@ ds@gmail.com:ds123456
 towi@gmail.com:towi123456
 johnsnow@gmail.com:johnsnow
 
+Untuk API alamat ada limit per detiknya Ko, mohon jangan cepat cepat refreshnya.
+
 https://uas-viriyalucky-19700.vercel.app/
 
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
 
-<!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
 
 <script>
