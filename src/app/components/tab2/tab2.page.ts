@@ -81,6 +81,7 @@ export class Tab2Page implements OnInit {
         if(typeof(data.data()['lastPosition'].position) != undefined){
           this.lat = data.data()['lastPosition'].position.lat
           this.lng = data.data()['lastPosition'].position.lng
+          this.goToMyLocation();
         }
       } catch (error) {
         
@@ -89,9 +90,6 @@ export class Tab2Page implements OnInit {
     });
 
     this.firestoreService.getFriendList(this.uid).subscribe((data)=>{
-      if(data.length == 0){
-        this.goToMyLocation();
-      }
       this.listLocation = [];
       data.forEach((element, i) => {
         this.firestoreService.getUserInfo(element.friend_id).then((data)=>{
@@ -106,7 +104,7 @@ export class Tab2Page implements OnInit {
             "icon": "assets/markercluster/marker.png",
             "id" : i
           }
-          console.log("sebelom")
+          // console.log("sebelom")
           this.setAddress = function() {
               setTimeout(function(){
                 this.getAddressService(doc.lastPosition.position.lat, doc.lastPosition.position.lng, i, markerMap);
@@ -134,7 +132,7 @@ export class Tab2Page implements OnInit {
         observer.next(pos);
       }),
       () => {
-          console.log('Position is not available');
+          // console.log('Position is not available');
       },
       {
         enableHighAccuracy: true
@@ -155,6 +153,7 @@ export class Tab2Page implements OnInit {
   public locationClicked = () => {
     if (this.map)
       this.map.panTo({ lat: this.lat, lng:this.lng });
+      this.map.setZoom(14)
   }
 
   goToMyLocation() {

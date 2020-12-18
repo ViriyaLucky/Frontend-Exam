@@ -33,7 +33,7 @@ export class LoginPage implements OnInit {
         this.router.navigateByUrl('/');
       } 
     }, err => {
-      console.log(err);
+      // console.log(err);
       // this.router.navigateByUrl('/login');
     });
 

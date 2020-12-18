@@ -41,6 +41,9 @@ export class FirestoreService {
   getUserInfo(UID: string) {
     return this.firestore.doc(`users/${UID}`).ref.get();
   }
+  getUserInfoObserve(UID: string) {
+    return this.firestore.doc(`users/${UID}`).valueChanges();
+  }
   updateProfile(
     nama: string,
     extension,
@@ -162,9 +165,28 @@ export class FirestoreService {
 
   uploadProfileImage(profileImage: File, extension, uid: string) {
     const file = profileImage;
-    const filePath = "profileImage/" + uid + "." + extension;
+    var d = new Date();
+    var n = d.toString();
+    const filePath = "profileImage/" + uid + "-" + n + "." + extension;
     const ref = this.storage.ref(filePath);
     const task = ref.put(file);
+    task.then((savedPicture)=>{
+      var profileImageUrl = uid + "-" + n + "." + extension;
+      var docRef = this.firestore.doc(`users/${uid}`);
+      docRef.ref
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          //change image if extension exist
+          if (extension) {
+            docRef.update({
+              profileImageUrl,
+            });
+          } 
+        }
+      })
+      .catch(function (error) {});
+    })
   }
 
   updateProfileImageUrl(
@@ -194,7 +216,7 @@ export class FirestoreService {
         .getDownloadURL()
         .toPromise();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 

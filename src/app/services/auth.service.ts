@@ -44,7 +44,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       this.afAuth.signOut()
         .then(() => {
-          console.log("LOG Out");
+          // console.log("LOG Out");
           this.router.navigate(['/login']);
           resolve()
         }).catch((error) => {
@@ -70,7 +70,7 @@ export class AuthService {
         this.uid = '';
       }
     }, err => {
-      console.log(err);
+      // console.log(err);
       // this.router.navigateByUrl('/login');
     });
   }

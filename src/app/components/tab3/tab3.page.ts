@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import * as firebase from 'firebase';
 import { FirestoreService } from 'src/app/services/firestore.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { Pipe, PipeTransform } from '@angular/core';
 
 
@@ -18,7 +18,9 @@ export class Tab3Page implements OnInit{
   profileImageUrl = "../../../assets/user-placeholder.png";
   fullname = "";
   uid = firebase.default.auth().currentUser.uid;
-  constructor(private auth:AuthService, private router: Router, private firestoreService:FirestoreService, public alertCtrl:AlertController) {
+  constructor(private auth:AuthService, private router: Router, 
+    private loadingCtrl:LoadingController,
+    private firestoreService:FirestoreService, public alertCtrl:AlertController) {
     this.uid = firebase.default.auth().currentUser ? firebase.default.auth().currentUser.uid : "";
 
   }
@@ -43,12 +45,16 @@ export class Tab3Page implements OnInit{
     document.querySelector('input').click()
   }
 
-  handle($event){
+  async handle($event){
+    const loading = await this.loadingCtrl.create({
+      message: 'Please wait...',
+      duration: 10000
+    });
+    await loading.present();
     const file = $event.target.files[0];
     const extension = file.name.split('.')[1];
-    this.firestoreService.updateProfileImageUrl(extension, this.uid)
+    // this.firestoreService.updateProfileImageUrl(extension, this.uid)
     this.firestoreService.uploadProfileImage(file, extension, this.uid);
-    this.getUserInfo();
 
     // this.profileImageUrl = noExtension + "." + extension
   }
@@ -61,7 +67,7 @@ export class Tab3Page implements OnInit{
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         },
         {
@@ -76,21 +82,19 @@ export class Tab3Page implements OnInit{
     
   }
   getUserInfo(){
-    this.firestoreService.getUserInfo(this.uid).then((doc) => {
-      if(doc.exists){
-        console.log(doc.data());
-        this.profile = doc.data();
+    this.firestoreService.getUserInfoObserve(this.uid).subscribe((doc) => {
+      if(doc){
+        // console.log(doc.data());
+        this.profile = doc;
         this.fullname = this.profile.fname + " " + this.profile.lname
         this.firestoreService.getProfileImageUrl(this.profile.profileImageUrl).then((res)=>{
           this.profileImageUrl = res;
         }).catch((error)=>{
-            console.log(error);
+            // console.log(error);
         });
       }else{
-        console.log('error getting document', doc)
+        // console.log('error getting document', doc)
       }
-  }).catch(function (error){
-    console.log('error getting document', error)
-  });
+  })
   }
 }

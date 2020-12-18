@@ -35,9 +35,9 @@ export class SearchFriendComponent implements OnInit {
           element.profileImageUrl = "../../../assets/user-placeholder.png"
           this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
             element.profileImageUrl = res;
-            console.log(res);
+            // console.log(res);
           }).catch((error)=>{
-              console.log(error);
+              // console.log(error);
           });
       });
       }
@@ -58,7 +58,7 @@ export class SearchFriendComponent implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         },
         {

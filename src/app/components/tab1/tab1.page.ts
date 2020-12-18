@@ -63,7 +63,7 @@ export class Tab1Page implements OnInit {
               fr.imageUrl =  res;
               this.listFriend[Number(curr.toString())] = fr; 
             }).catch((error)=>{
-                console.log(error);
+                // console.log(error);
             });
             this.counter++
           })
@@ -106,10 +106,10 @@ export class Tab1Page implements OnInit {
             console.log(error);
         });
       }else{
-        console.log('error getting document', doc)
+        // console.log('error getting document', doc)
       }
   }).catch(function (error){
-    console.log('error getting document', error)
+    // console.log('error getting document', error)
   });
   }
 
@@ -122,7 +122,7 @@ export class Tab1Page implements OnInit {
           text: 'Cancel',
           role: 'cancel',
           handler: data => {
-            console.log('Cancel clicked');
+            // console.log('Cancel clicked');
           }
         },
         {
@@ -131,7 +131,7 @@ export class Tab1Page implements OnInit {
             this.listFriend = this.listFriend.filter(data=> data.friend_id != friend.friend_id)
             this.firestoreService.friendList = this.listFriend;
             this.firestoreService.deleteFriend(friend.friend_id, this.uid).then((result) => {
-                console.log(result);
+                // console.log(result);
             }).catch((err) => {
               
             });
@@ -145,7 +145,7 @@ export class Tab1Page implements OnInit {
   async filterList(evt) {
     this.listFriend = this.listFriendBackup;
     const searchTerm = evt.srcElement.value;
-    console.log(searchTerm);
+    // console.log(searchTerm);
     if (!searchTerm) {
       return;
     }
