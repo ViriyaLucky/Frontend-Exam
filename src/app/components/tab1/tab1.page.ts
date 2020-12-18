@@ -23,7 +23,6 @@ export class Tab1Page implements OnInit {
   user;
   docLength;
   userData;
-  counter = 0;
   constructor(private firestoreService:FirestoreService, 
     public authService:AuthService ,
     public modalController: ModalController,
@@ -40,12 +39,19 @@ export class Tab1Page implements OnInit {
       .subscribe((doc) => {
         this.listFriend = []
         let temp = []
-        this.docLength = doc.length
+        let isRequest = true;
         doc.forEach((docs:any,index) => {
-            this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
-            if(index+1 > this.docLength){
+            temp.forEach((element, index) => {
+            if(element.friend_id == docs.friend_id){
+              isRequest = false;
+              }
+            });
+            if(isRequest == false){
+              isRequest = true;
               return
-            }
+            }else{
+            this.firestoreService.getFriendData(docs.friend_id).subscribe((doc:any) => {
+            console.log("dipanggil nih" + docs.friend_id)
             let user = new User().deserialize(doc);
             let profileImage = user.profileImageUrl;
             user.profileImageUrl = "../../../assets/user-placeholder.png";
@@ -53,8 +59,6 @@ export class Tab1Page implements OnInit {
             let fr = new Friend().deserialize({ friend_id , user});
             temp.push(fr);
 
-            let curr = this.counter;
-            // this.getImageUrl(fr);
             this.firestoreService.getProfileImageUrl(profileImage).then((res)=>{
               fr.user.profileImageUrl =  res;   
               temp.forEach((element, index) => {
@@ -65,31 +69,22 @@ export class Tab1Page implements OnInit {
             }).catch((error)=>{
                 // console.log(error);
             });
-            this.counter++
+            temp.forEach((item, index) => {
+              if (this.listFriend.findIndex(i => i.friend_id == item.friend_id) === -1) 
+              {
+                this.listFriend.push(item)
+              }
+          
+            });
+            this.listFriendBackup = this.listFriend;
+            this.firestoreService.friendList = this.listFriend;
           })
+       
+          } 
         });
-        this.listFriend = temp;
-        this.listFriend.forEach((data, index)=>{
-          this.firestoreService.getProfileImageUrl(data.user.profileImageUrl).then((res)=>{
-            this.listFriend[index].user.profileImageUrl = res
-            console.log(res)
-          }).catch((error)=>{
-              // console.log(error);
-          });
-        })
-        this.counter = 0;
-        this.listFriendBackup = this.listFriend;
-        this.firestoreService.friendList = this.listFriend;
+        
       })
      
-  }
-  getImageUrl(fr){
-    this.firestoreService.getProfileImageUrl(fr.user.profileImageUrl).then((res)=>{
-      console.log(res)
-      fr.user.profileImageUrl = res
-    }).catch((error)=>{
-        // console.log(error);
-    });
   }
   
   async addFriend(){
